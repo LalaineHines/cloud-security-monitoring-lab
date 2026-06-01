@@ -1,0 +1,20 @@
+name: Security Pipeline
+
+on:
+    push:
+
+jobs:
+    security:
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/checkout@v4
+        
+        - name: Setup Python
+          uses: actions/setup-python@v5
+
+        - name: Run Detection Engine
+          run: python scripts/detection_engine.py
+
+        - name: Run Unit Tests
+          run: pytest
