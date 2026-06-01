@@ -100,8 +100,8 @@ def detect_reconnaissance(logs):
             severity="MEDIUM",
             source_ip="Multiple",
             user="Unknown",
-            mitre_technique="T1580"
-            descritption=f"{count} ListUsers requests detected."
+            mitre_technique="T1580",
+            description=f"{count} ListUsers requests detected."
         )
         
         
