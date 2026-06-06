@@ -13,6 +13,27 @@ from collections import Counter
 ALERT_FILE = Path("alerts/alerts.json")
 REPORT_FILE = Path("reports/incident_report.md")
 
+RISK_SCORES = {
+    "CRITICAL": 20,
+    "HIGH": 10,
+    "MEDIUM": 5,
+    "LOW": 1
+}
+
+RECOMMENDATIONS = {
+    "Privilege Escalation":
+        "Review IAM permissions and remove unnecessary administrative access.",
+
+    "Public Bucket Exposure":
+        "Restrict bucket permissions and enable access logging.",
+
+    "Cloud Reconnaissance":
+        "Investigate excessive enumeration activity and review account usage.",
+
+    "Brute Force Attempt":
+        "Enable MFA and investigate repeated authentication failures."
+}
+
 def load_alerts():
     
     if not ALERT_FILE.exists():
@@ -41,14 +62,38 @@ def generate_report():
     
     severity_counts, finding_counts = calculate_statistics(alerts)
     
+    total_risk = sum(
+    RISK_SCORES.get(alert["severity"], 0)
+    for alert in alerts
+)
+
+    if total_risk >= 50:
+        risk_rating = "CRITICAL"
+    elif total_risk >= 25:
+        risk_rating = "HIGH"
+    elif total_risk >= 10:
+        risk_rating = "MEDIUM"
+    else:
+        risk_rating = "LOW"
+    
     report = []
     
     report.append("# Security Incident Report\n")
     report.append(
-        f"Generate: {datetime.utcenow().isoformat()}\n"
+        f"Generate: {datetime.utcnow().isoformat()}\n"
     )
     
     report.append("## Executive Summary\n")
+    
+    report.append("\n## Risk Assessment\n")
+
+    report.append(
+        f"- Total Risk Score: {total_risk}"
+    )
+
+    report.append(
+        f"- Overall Risk Rating: {risk_rating}\n"
+    )
     
     report.append(
         f"A total of {len(alerts)} security alerts "
@@ -100,6 +145,25 @@ def generate_report():
         report.append(
             f"- Status: {alert['status']}\n"
         )
+        
+    report.append("\n## Recommended Actions\n")
+
+    recommendations_added = set()
+
+    for alert in alerts:
+
+        finding = alert["finding"]
+
+        if (
+            finding in RECOMMENDATIONS
+            and finding not in recommendations_added
+        ):
+
+            report.append(
+                f"- {RECOMMENDATIONS[finding]}"
+            )
+
+            recommendations_added.add(finding)
         
     REPORT_FILE.parent.mkdir(exist_ok=True)
     
