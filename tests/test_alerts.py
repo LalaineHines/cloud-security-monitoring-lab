@@ -8,6 +8,8 @@ import json
 import tempfile
 from pathlib import Path
 
+import pytest
+
 import scripts.alert_manager as alert_manager
 
 @pytest.fixture
