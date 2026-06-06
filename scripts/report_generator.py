@@ -13,18 +13,6 @@ from collections import Counter
 ALERT_FILE = Path("alerts/alerts.json")
 REPORT_FILE = Path("reports/incident_report.md")
 
-RISK_SCORES = {
-    "CRITICAL": 20,
-    "HIGH": 10,
-    "MEDIUM": 5,
-    "LOW": 1
-}
-
-total_risk = sum(
-    RISK_SCORES.get(alert["severity"], 0)
-    for alert in alerts
-)
-
 def load_alerts():
     
     if not ALERT_FILE.exists():
