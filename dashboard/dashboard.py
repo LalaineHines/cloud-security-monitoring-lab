@@ -12,7 +12,7 @@ def load_alerts():
     Return a list of alert dictionaries
     """
     
-    if not os.path.exists(ALERT_FILE):
+    if not os.path.exists(ALERTS_FILE):
         return []
     
     try:
