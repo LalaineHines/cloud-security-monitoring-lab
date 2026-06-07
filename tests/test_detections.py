@@ -9,40 +9,146 @@ from scripts.detection_engine import (
     detect_privilege_escalation,
 )
 
-from unittest import patch
 
-
-def test_public_bucket_detection():
+def test_public_bucket_detection(monkeypatch):
+    
+    alerts_created = []
+    
+    def mock_create_alert(**kwargs):
+        alerts_created.append(kwargs)
+        
+    monkeypatch.setattr(
+        "scripts.detection_engine.create_alert",
+        mock_create_alert
+    )
     
     event = {
         "eventName": "PutBucketAcl",
         "acl": "public-read",
-        "sourceIPAddress": "192.168.1.50",
+        "sourceIPAddress": "192.168.1.100",
         "user": "storage-admin"
     }
+
+    detect_public_bucket(event)
+        
+    assert len(alerts_created) == 1
+    assert alerts_created[0]["finding"] == (
+        "Public Bucket Exposure"
+    )
+        
+        
+def test_privilege_escalation_detection(monkeypatch):
     
-    with patch(
-        "scripts.detection_engine.create_alert"
-    ) as mock_alert:
-        
-        detect_public_bucket(event)
-        
-        mock_alert.assert_called_once()
-        
-        
-def test_privilege_escalation_detection():
+    alerts_created = []
+    
+    def mock_create_alert(**kwargs):
+        alerts_created.append(kwargs)
+            
+    monkeypatch.setattr(
+        "scripts.detection_engine.create_alert",
+        mock_create_alert
+    )
     
     event = {
         "eventName": "AttachuserPolicy",
         "policy": "AdministratorAccess",
-        "sourceIPAddress": "192.168.1.100",
+        "sourceIPAddress": "10.0.0.5",
         "user": "developer"
     }
     
-    with patch(
-        "scripts.detection_engine.create_alert"
-    ) as mock_alert:
+    detect_privilege_escalation(event)
+    
+    assert len(alerts_created) == 1
+    assert alerts_created[0]["finding"] == (
+        "Privilege Escalation"
+    )
+    
+    
+def test_bruteforce_detection(monkeypatch):
+    
+    alerts_created = []
+    
+    def mock_create_alert(**kwargs):
+        alerts_created.append(kwargs)
         
-        detect_privilege_escalation(event)
+    monkeypatch.setattr(
+        "scripts.detection_engine.create_alert",
+        mock_create_alert
+    )
+    
+    logs = []
+    
+    for _ in range(6):
         
-        mock_alert.assert_called_once()
+        logs.append({
+            "eventName": "ConsoleLogin",
+            "errorMessage": "Failed authentication",
+            "sourceIPAddress": "8.8.8.8"
+        })
+        
+    from scripts.detection_engine import (
+        detect_bruteforce
+    )
+    
+    detect_bruteforce(logs)
+    
+    assert len(alerts_created) == 1
+    assert alerts_created[0]["finding"] == (
+        "Brute Force Attempt"
+    )
+    
+    
+def test_reconnaissance_detection(monkeypatch):
+    
+    alerts_created = []
+    
+    def mock_create_alert(**kwargs):
+        alerts_created.append(kwargs)
+        
+    monkeypatch.setattr(
+        "scripts.detection_engine.create_alert",
+        mock_create_alert
+    )
+    
+    logs = []
+    
+    for _ in range(6):
+        
+        logs.append({
+            "eventName": "ListUsers"
+        })
+        
+    from scripts.detection_engine import (
+        detect_reconnaissance
+    )
+    
+    detect_reconnaissance(logs)
+    
+    assert len(alerts_created) == 1
+    assert alerts_created[0]["finding"] == (
+        "Cloud Reconnaissance"
+    )
+    
+    
+def test_normal_activity_generates_no_alerts(
+    monkeypatch
+):
+    
+    alerts_created = []
+    
+    def mock_create_alert(**kwargs):
+        alerts_created.append(kwargs)
+        
+    monkeypatch.setattr(
+        "scripts.detection_engine.create_alert",
+        mock_create_alert
+    )
+    
+    event = {
+        "eventName": "GetObject",
+        "user": "alice"
+    }
+    
+    detect_public_bucket(event)
+    
+    assert len(alerts_created) == 0
