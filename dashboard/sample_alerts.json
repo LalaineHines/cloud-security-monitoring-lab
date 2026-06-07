@@ -1,0 +1,14 @@
+[
+    {
+        "severity": "HIGH",
+        "finding": "Privilege Escalation"
+    },
+    {
+        "severity": "MEDIUM",
+        "finding": "Cloud Reconnaissance"
+    },
+    {
+        "severity": "HIGH",
+        "finding": "Public Bucket Exposure"
+    }
+]
