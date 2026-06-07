@@ -1,7 +1,7 @@
 # Security Incident Report
 
 **Report Date:** June 2026
-**Analyst:** [Your Name]
+**Analyst:** [Lalaine Hines]
 **Project:** Cloud Security Monitoring & Threat Detection Platform
 
 ---
