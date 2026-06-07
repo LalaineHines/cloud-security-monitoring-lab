@@ -1,0 +1,33 @@
+[
+    {
+        "name": "Public Bucket Exposure",
+        "eventName": "PutBucketAcl",
+        "field": "acl",
+        "value": "public-read",
+        "severity": "HIGH",
+        "mitre_technique": "T1530"
+    },
+    {
+        "name": "Privilege Escalation",
+        "eventName": "AttachUserPolicy",
+        "field": "policy",
+        "value": "AdministratorAccess",
+        "severity": "HIGH",
+        "mitre_technique": "T1098"
+    },
+    {
+        "name": "Cloud Reconnaissance",
+        "eventName": "ListUsers",
+        "threshold": 5,
+        "severity": "MEDIUM",
+        "mitre_technique": "T1580"
+    },
+    {
+        "name": "Brute Force Attempt",
+        "eventName": "ConsoleLogin",
+        "errorMessage": "Failed authentication",
+        "threshold": 5,
+        "severity": "HIGH",
+        "mitre_technique": "T1110"
+    }
+]

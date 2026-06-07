@@ -1,0 +1,18 @@
+{
+    "Privilege Escalation": {
+        "technique": "T1098",
+        "name": "Account Manipulation"
+    },
+    "Public Bucket Exposure": {
+        "technique": "T1530",
+        "name": "Data from Cloud Storage"
+    },
+    "Cloud Reconnaissance": {
+        "technique": "T1580",
+        "name": "Cloud Infrastructure Discovery"
+    },
+    "Brute Force Attempt": {
+        "technique": "T1110",
+        "name": "Brute Force"
+    }
+}
