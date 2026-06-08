@@ -1,20 +1,59 @@
-name: Security Pipeline
+name: Cloud Security Monitoring Pipeline
 
 on:
-    push:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch: {}
 
 jobs:
-    security:
-      runs-on: ubuntu-latest
 
-      steps:
-        - uses: actions/checkout@v4
-        
-        - name: Setup Python
-          uses: actions/setup-python@v5
+  security-monitoring:
 
-        - name: Run Detection Engine
-          run: python scripts/detection_engine.py
+    runs-on: ubuntu-latest
 
-        - name: Run Unit Tests
-          run: pytest
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      - name: Generate Normal Logs
+        run: |
+          python scripts/log_generator.py
+
+      - name: Simulate Attacks
+        run: |
+          python scripts/attack_simulator.py
+
+      - name: Run Detection Engine
+        run: |
+          python scripts/detection_engine.py
+
+      - name: Generate Incident Report
+        run: |
+          python scripts/report_generator.py
+
+      - name: Run Tests
+        run: |
+          pytest tests/
+
+      - name: Upload Incident Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: incident-report
+          path: reports/incident_report.md
