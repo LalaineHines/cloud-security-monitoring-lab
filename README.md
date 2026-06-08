@@ -1,3 +1,4 @@
+![Pipeline Status](https://github.com/USERNAME/cloud-security-monitoring-lab/actions/workflows/security_pipeline.yml/badge.svg)
 # Cloud Security Monitoring & Threat Detection Platform
 
 ## Overview
